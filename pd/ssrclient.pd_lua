@@ -26,104 +26,98 @@ function SsrClient:restore_command()
     end
 end
 
+local SELECTORS = {
+    source = "src",
+    reference = "ref",
+    loudspeaker = "ls",
+    transport = "transport",
+    volume = "vol",
+}
+
+local ATTRIBUTES = {
+    file = "file",
+    port = "port",
+    position = "pos",
+    orientation = "azi",
+}
+
 -- init stuff and set up callbacks for XML parser
 function SsrClient:initialize(name, atoms)
     self.inlets = 2
     self.outlets = 2
     self.buffer = {}
+    self.elements = {}
+    self.selector = nil
+    self.src_id = nil
     self.command = {}
+
+    -- TODO: set initial values before parser.parse()! Use wrapper function?
 
     self.parser = SLAXML:parser{
         startElement = function(name, nsURI, nsPrefix)
-            if name == "update" then
-                -- not checked
-            elseif name == "source" then
-                self.command = {"src"}
-            elseif name == "reference" then
-                self.command = {"ref"}
-                self:backup_command()
-            elseif name == "loudspeaker" then
-                self.command = {"ls"}
-                self:backup_command()
-            elseif name == "transport" then
-                self.command = {"transport"}
-            elseif name == "volume" then
-                table.insert(self.command, "vol")
-            elseif name == "file" then
-                self:restore_command()
-                table.insert(self.command, "file")
-            elseif name == "port" then
-                self:restore_command()
-                table.insert(self.command, "port")
-            elseif name == "position" then
-                self:restore_command()
-                table.insert(self.command, "pos")
-            elseif name == "orientation" then
-                self:restore_command()
-                table.insert(self.command, "azi")
-            elseif name == "state" or name == "scene" then
-                -- these strings don't become part of the message
-                self:backup_command()
+            if #self.elements == 0 and name ~= "update" then
+                self:error("Root element must be <update>")
+            elseif #self.elements == 1 then
+                self.selector = SELECTORS[name]
+                if name == "state" or name == "scene" then
+                    -- do nothing?
+                elseif self.selector == nil then
+                    self:error("<" .. name .. "> not allowed here")
+                end
+            elseif #self.elements == 2 then
+                assert false, "do we see this in Pd?"
+                assert not self.command
+                local attr = ATTRIBUTES[name]
+                if attr then
+                    table.insert(self.command, attr)
+                elseif name == "state" or name == "scene" then
+                    -- these strings don't become part of the message
+                else
+                    self:error("<" .. name .. "> not allowed here")
+                end
             else
-                self:error(name .. " is ignored")
+                self:error(name .. " is nested too deeply")
             end
+            table.insert(self.elements, name)
         end,
         attribute = function(name, value, nsURI, nsPrefix)
             if name == "id" then
+                self.src_id = tonumber(value)
+            elseif name == "x" or name = "y" or name = "azimuth" then
                 table.insert(self.command, tonumber(value))
-                self:backup_command()
-            elseif name == "x" then
-                table.insert(self.command, tonumber(value))
-            elseif name == "y" then
-                table.insert(self.command, tonumber(value))
-                self:output_command()
-            elseif name == "azimuth" then
-                table.insert(self.command, tonumber(value))
-                self:output_command()
             elseif name == "name" or name == "model" or name == "transport" then
-                self:restore_command()
                 table.insert(self.command, name)
                 table.insert(self.command, value)
-                self:output_command()
             elseif name == "mute" or name == "fixed" then
-                self:restore_command()
                 table.insert(self.command, name)
                 if value == "true" or value == "1" then
                     table.insert(self.command, 1)
                 elseif value == "false" or value == "0" then
                     table.insert(self.command, 0)
                 else
-                    self:error("invalid value for mute: " .. value)
+                    self:error("Invalid value for mute: " .. value)
                 end
-                self:output_command()
             elseif name == "length" or name == "file_length" or
                    name == "level" then
-                self:restore_command()
                 table.insert(self.command, name)
                 table.insert(self.command, tonumber(value))
-                self:output_command()
             elseif name == "volume" then
-                self:restore_command()
                 table.insert(self.command, "vol")
                 table.insert(self.command, tonumber(value))
-                self:output_command()
             elseif name == "channel" then
-                self:restore_command()
                 table.insert(self.command, "file_channel")
                 table.insert(self.command, tonumber(value))
-                self:output_command()
-                self:restore_command()
+                -- TODO: self:output_command()
                 table.insert(self.command, "file")
             elseif name == "output_level" then
-                self:restore_command()
                 table.insert(self.command, "weights")
                 for weight in value:gmatch("%S+") do
                     table.insert(self.command, tonumber(weight))
                 end
-                self:output_command()
             else
-                self:error("ignored attribute: " .. name .. " value: " .. value)
+                self:error("Ignored attribute: " .. name .. " value: " .. value)
             end
+            -- TODO: output command (except for "x")
         end,
         closeElement = function(name, nsURI)
             -- nothing
