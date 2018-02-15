@@ -130,7 +130,8 @@ struct parameter_map : std::map<std::string, std::string>
    *   Or you can use the throwing version of get<T>().
    **/
   template<typename T>
-  T get(const std::string& k, const T& def) const
+  T get(const std::string& k
+      , const typename std::remove_reference<T>::type& def) const
   {
     try
     {
