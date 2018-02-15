@@ -37,6 +37,10 @@ SECTION("stuff", "")
   CHECK(val3 == 42);
   val4 = params.get("three", 3.0);
   CHECK(val4 == 3.1415);
+  // NB: The target type is deduced from the default argument, decimal number
+  // cannot be converted to integer:
+  val4 = params.get("three", 666);
+  CHECK(val4 == 666.0);
   if (params.has_key("four"))
   {
     // this is not done because there is no key named "four":
