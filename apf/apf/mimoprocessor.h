@@ -398,11 +398,11 @@ class MimoProcessor : public interface_policy
 APF_MIMOPROCESSOR_TEMPLATES
 APF_MIMOPROCESSOR_BASE::MimoProcessor(const parameter_map& params_)
   : interface_policy(params_)
-  , query_policy(params_.get("fifo_size", size_t(1024)))
+  , query_policy(params_.get<size_t>("fifo_size", 1024))
   , params(params_)
-  , _fifo(params.get("fifo_size", size_t(1024)))
+  , _fifo(params.get<size_t>("fifo_size", 1024))
   , _current_list(nullptr)
-  , _num_threads(params.get("threads"
+  , _num_threads(params.get<unsigned>("threads"
         , thread_policy::default_number_of_threads()))
   , _input_list(_fifo)
   , _output_list(_fifo)

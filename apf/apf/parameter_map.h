@@ -129,6 +129,7 @@ struct parameter_map : std::map<std::string, std::string>
    *   (e.g. with apf::str::S2A()).
    *   Or you can use the throwing version of get<T>().
    **/
+#if 0
   template<typename T>
   T get(const std::string& k
       , const typename std::remove_reference<T>::type& def) const
@@ -142,6 +143,37 @@ struct parameter_map : std::map<std::string, std::string>
       return def;
     }
     catch (const std::invalid_argument&)
+    {
+      return def;
+    }
+  }
+#else
+  /// T& to disallow literals!
+  template<typename T>
+  T get(const std::string& k, T& def) const
+  {
+    try
+    {
+      return this->get<T>(k);
+    }
+    catch (const std::out_of_range&)
+    {
+      return def;
+    }
+    // std::invalid_argument is not caught!
+  }
+#endif
+
+
+  /// Overload to allow rvalue std::strings.
+  /// No conversion necessary! Doesn't throw!
+  std::string get(const std::string& k, const std::string& def) const
+  {
+    try
+    {
+      return this->operator[](k);
+    }
+    catch (const std::out_of_range&)
     {
       return def;
     }
@@ -168,12 +200,15 @@ struct parameter_map : std::map<std::string, std::string>
    *   conversion failed, @p def is returned.
    * @warning Same warning as for the other get() version with default value.
    **/
+#if 0
   template<typename char_T>
   std::basic_string<char_T>
   get(const std::string& k, const char_T* const def) const
   {
     return this->get(k, std::basic_string<char_T>(def));
   }
+#else
+#endif
 
   /** Throwing getter.
    * @tparam T Desired output type

@@ -261,7 +261,7 @@ RendererBase<Derived>::RendererBase(const apf::parameter_map& p)
   : _base(_add_params(p))
   , state(_fifo, p)
   , master_volume_correction(apf::math::dB2linear(
-        this->params.get("master_volume_correction", 0.0)))
+        this->params.get<sample_type>("master_volume_correction", 0)))
   , _master_level()
   , _source_list(_fifo)
   , _show_head(true)
