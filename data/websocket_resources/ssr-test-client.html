@@ -7,6 +7,7 @@ var DEFAULT_PORT = "9422";
 var SUBPROTOCOL = "ssr-json";
 
 var SOCKET;
+var SENSOR;
 
 var OUTGOING_LOG = new Array(10);
 var INCOMING_LOG = new Array(10);
@@ -210,6 +211,18 @@ function onLoad()
   }
   document.getElementById("input-disconnect").disabled = true;
 
+  //let SENSOR = new AbsoluteOrientationSensor({frequency: 60});
+  SENSOR = new AbsoluteOrientationSensor({frequency: 10, referenceFrame: "device"});
+  SENSOR.onreading = () => sendObject(SENSOR.quaternion);
+  SENSOR.onerror = event => {
+    if (event.error.name == 'NotReadableError') {
+      document.getElementById("sensor").hidden = true;
+      console.log("Orientation sensor is not available.");
+    }
+  }
+  //SENSOR.start();
+  //SENSOR.stop();
+
   for (const idx in examples)
   {
     var a = document.createElement("a");
@@ -231,6 +244,14 @@ function handleSubscription(box)
   }
 }
 
+function handleSensor(box)
+{
+  if (box.checked) {
+    SENSOR.start();
+  } else {
+    SENSOR.stop();
+  }
+}
 function resetValues(subscription)
 {
   if (!subscription) {
@@ -397,6 +418,13 @@ textarea {
     <li>master level: <span id="master-level"></span></li>
     <li>CPU load: <span id="cpu"></span></li>
   </ul>
+
+  <div id="sensor">
+    <label>
+      <input type="checkbox" onclick="handleSensor(this)">
+      Use device sensor to control reference rotation offset
+    </label>
+  </div>
 
   <h3>Loudspeakers</h3>
 
