@@ -181,6 +181,12 @@ ENABLE_AUTO([dca],[Distance-coded Ambisonics renderer],
     [SSR_executables="$SSR_executables ssr-dca"])
 ])
 
+ENABLE_AUTO([passthrough], [pass-through renderer],
+[
+  AS_IF([test x$enable_passthrough = xyes -o x$have_all = xyes],
+    [SSR_executables="$SSR_executables ssr-passthrough"])
+])
+
 dnl Note: For what happens with SSR_executables see src/Makefile.am
 AC_SUBST(SSR_executables)
 

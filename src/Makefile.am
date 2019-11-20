@@ -9,7 +9,15 @@
 bin_PROGRAMS = $(SSR_executables)
 
 ## All possible optional programs must be listed here
-EXTRA_PROGRAMS = ssr-binaural ssr-wfs ssr-generic ssr-brs ssr-dca ssr-vbap ssr-aap
+EXTRA_PROGRAMS = \
+	ssr-binaural \
+	ssr-wfs \
+	ssr-generic \
+	ssr-brs \
+	ssr-dca \
+	ssr-vbap \
+	ssr-aap \
+	ssr-passthrough
 
 ## CPPFLAGS: preprocessor flags, e.g. -I and -D
 ## -I., -I$(srcdir), and a -I pointing to the directory holding config.h
@@ -89,6 +97,11 @@ ssr_dca_SOURCES = ssr_dca.cpp dcarenderer.h \
 	$(SSRSOURCES)
 
 nodist_ssr_dca_SOURCES = $(SSRMOCFILES)
+
+ssr_passthrough_SOURCES = ssr_passthrough.cpp passthroughrenderer.h \
+	$(SSRSOURCES)
+
+nodist_ssr_passthrough_SOURCES = $(SSRMOCFILES)
 
 LOUDSPEAKERSOURCES = \
 	loudspeakerrenderer.h \
