@@ -581,6 +581,8 @@ class Controller<Renderer>::query_state
           levels->source_id = source.id;
           levels->source_level = source.get_level();
 
+          // TODO: only do this if renderer supports get_output_levels()?
+
           assert(levels->outputs.size() == _renderer.get_output_list().size());
           levels->outputs_available = source.get_output_levels(
               &*levels->outputs.begin(), &*levels->outputs.end());
@@ -636,10 +638,12 @@ class Controller<Renderer>::query_state
       }
       else
       {
+#if 0
         // NB: The output list should only be accessed by the audio thread.
         //     Since the number of outputs is never changed, that's OK here.
         _source_levels.resize(_new_size
           , SourceLevel(_renderer.get_output_list().size()));
+#endif
       }
     }
 
