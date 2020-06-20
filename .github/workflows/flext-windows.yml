@@ -1,0 +1,31 @@
+name: Build Pd Externals for Windows
+on: [push, pull_request]
+jobs:
+  flext:
+    runs-on: windows-latest
+    steps:
+    - name: checkout pure-data
+      uses: actions/checkout@v2
+      with:
+        repository: pure-data/pure-data
+        path: pure-data
+
+    - name: checkout flext
+      uses: actions/checkout@v2
+      with:
+        repository: grrrr/flext
+        path: flext
+
+    # This provides "nmake", which is used in "build.bat"
+    - name: Enable Developer Command Prompt
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: build and install flext
+      working-directory: flext
+      # This is needed to run .bat files:
+      shell: cmd
+      run: |
+        call build pd msvc || true
+        echo PDPATH=%GITHUB_WORKSPACE%\pure-data >> buildsys/config-win-pd-msvc.txt
+        call build pd msvc || true
+        call build pd msvc
