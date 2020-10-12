@@ -33,7 +33,7 @@ cd ..
 #cd ..
 #cd ..
 
-git clone git://ecasound.git.sourceforge.net/gitroot/ecasound
+git clone https://git.code.sf.net/p/ecasound/code ecasound
 cd ecasound
 ./autogen-vc.sh
 ./configure
