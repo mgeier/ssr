@@ -32,3 +32,11 @@ cd ..
 #sudo make install
 #cd ..
 #cd ..
+
+git clone git://ecasound.git.sourceforge.net/gitroot/ecasound
+cd ecasound
+./autogen-vc.sh
+./configure
+make
+sudo make install
+cd ..

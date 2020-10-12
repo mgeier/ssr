@@ -105,7 +105,6 @@ jobs:
             asio \
             automake \
             cunit \
-            ecasound \
             fftw \
             fmt \
             jack \
