@@ -40,3 +40,13 @@ cd ecasound
 make
 sudo make install
 cd ..
+
+git clone https://github.com/fmtlib/fmt.git
+cd fmt
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+cd ..
+cd ..

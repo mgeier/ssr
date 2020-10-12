@@ -106,7 +106,6 @@ jobs:
             automake \
             cunit \
             fftw \
-            fmt \
             jack \
             liblo \
             libsndfile \
