@@ -21,6 +21,8 @@ sudo make install
 cd ..
 cd ..
 
+sudo cpan Parse::RecDescent
+
 git clone https://github.com/vrpn/vrpn.git
 cd vrpn
 mkdir build
