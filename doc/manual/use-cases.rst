@@ -43,6 +43,8 @@ corresponding virtual sources in SSR through the network interface.
 
 Watch this 1m:35s video to see this in action: https://youtu.be/aaAc7cDlacU
 
+All resources for the subsequent subsections are found here:
+https://github.com/SoundScapeRenderer/listening-test
 
 Using SSR for General Realtime Multichannel Signal Processing
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -65,8 +67,10 @@ use the binaural Renderer for this with one virtual source.
 SSR accepts one input channel, which it convolves with two different dedicated
 impulse responses (one for the left and one for right ear) to produce two output
 signals. We would like to process only one channel so that we simply ignore the
-second output. The file ``irs_1-in-1-out.wav`` that contains the pre-computed
-impulse responses that we would like to filter with looks as follows:
+second output. The file
+:gh-link:`data_linked_in_ssr_manual/impulse_responses/irs_1-in-1-out.wav` that
+contains the pre-computed impulse responses that we would like to filter with
+looks as follows:
 
 - 1st channel: impulse response of the filter that will be invoked by
   calling the index ``0``
@@ -90,7 +94,7 @@ that are called via given orientation angles of the user. Rather, we think of
 filter indices that we can call using the head tracking interface. We only need
 to replace the head tracking with another interface that allows us to select the
 desired filter indices. Here is a Pd patch that does exactly this:
-:gh-link:`data/scenes/select_filter_by_index.pd`
+:gh-link:`data_linked_in_ssr_manual/select_filter_by_index.pd`
 
 On Linux, start SSR using::
 
@@ -144,8 +148,9 @@ for all combinations of input and output channel and user position in MATLAB.
 
 The last component that remains to be implemented is a patch that transforms
 user position to filter index and distributes that to all SSR synchronously. We
-did this with this Pd patch: :gh-link:`data/scenes/tracker_to_4_ssr.pd`. You
-will see that there is no mechanism for guaranteeing that all filter indices
+did this with this Pd patch:
+:gh-link:`data_linked_in_ssr_manual/tracker_to_4_ssr.pd`. You will see that
+there is no mechanism for guaranteeing that all filter indices
 arrive synchronously. We rather send updates as soon as they come in from the
 tracker. The last index that an SSR instance receives just before the processing
 of a new signal block is the index that SSR uses. We did not notice a single
@@ -157,17 +162,17 @@ different JACK client names as well as that all SSR instances receive TCP/IP
 messages on different ports. SSR will otherwise refuse to start.
 
 Here is a shell script for Linux:
-:gh-link:`data/scenes/start_ssr_4_times_linux.sh` (and here one for macOS:
-:gh-link:`data/scenes/start_ssr_4_times_macos.sh`, make them executable
-using ``chmod a+x SCRIPT_NAME.SH``, in the macOS script, you need to adapt the
-global paths to the asdf files) that starts the 4 SSR instances for the
-8-channel crosstalk-canceling array. It then waits 5 s to make sure that all SSR
-instances have started up and then performs the required JACK connections. Note
-the ``--input-prefix=XXX:XXX`` and ``--output-prefix=YYY:YYY`` arguments. These
-make sure that SSR does not automatically connect to existing JACK ports. We did
-this for convenience to have manual control over which connections are
-established. All SSR instances would otherwise connect to output channels 1 and
-2 automatically.
+:gh-link:`data_linked_in_ssr_manual/start_ssr_4_times_linux.sh` (and here one
+for macOS: :gh-link:`data_linked_in_ssr_manual/start_ssr_4_times_macos.sh`,
+make them executable using ``chmod a+x SCRIPT_NAME.SH``, in the macOS script,
+you need to adapt the global paths to the asdf files) that starts the 4 SSR
+instances for the 8-channel crosstalk-canceling array. It then waits 5 s to
+make sure that all SSR instances have started up and then performs the
+required JACK connections. Note the ``--input-prefix=XXX:XXX`` and
+``--output-prefix=YYY:YYY`` arguments. These make sure that SSR does not
+automatically connect to existing JACK ports. We did this for convenience to
+have manual control over which connections are established. All SSR instances
+would otherwise connect to output channels 1 and 2 automatically.
 
 Afterwards, start Pd with the patch referenced above.
 

@@ -60,8 +60,8 @@ latex_documents = [
 def gh_link_role(rolename, rawtext, text, lineno, inliner,
                      options={}, content=()):
     from docutils import nodes, utils
-    github_url = 'https://github.com/SoundScapeRenderer/ssr'
-    blob_url = github_url + '/blob/' + release
+    github_url = 'https://github.com/SoundScapeRenderer/listening-test'
+    blob_url = github_url + '/blob/master'
     base_url = blob_url + '/%s'
     text = utils.unescape(text)
     full_url = base_url % text
