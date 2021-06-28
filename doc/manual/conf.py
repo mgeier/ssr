@@ -57,7 +57,19 @@ latex_documents = [
    ('index', 'SoundScapeRenderer.tex', project, u'SSR Team', 'manual'),
 ]
 
-def gh_link_role(rolename, rawtext, text, lineno, inliner,
+def gh_link_ssr_role(rolename, rawtext, text, lineno, inliner,
+                     options={}, content=()):
+    from docutils import nodes, utils
+    github_url = 'https://github.com/SoundScapeRenderer/ssr'
+    blob_url = github_url + '/blob/master'
+    base_url = blob_url + '/%s'
+    text = utils.unescape(text)
+    full_url = base_url % text
+    pnode = nodes.reference(internal=False, refuri=full_url)
+    pnode += nodes.literal(text, text, classes=['file'])
+    return [pnode], []
+
+def gh_link_lt_role(rolename, rawtext, text, lineno, inliner,
                      options={}, content=()):
     from docutils import nodes, utils
     github_url = 'https://github.com/SoundScapeRenderer/listening-test'
@@ -70,4 +82,5 @@ def gh_link_role(rolename, rawtext, text, lineno, inliner,
     return [pnode], []
 
 def setup(app):
-    app.add_role('gh-link', gh_link_role)
+    app.add_role('gh-link-ssr', gh_link_ssr_role)
+    app.add_role('gh-link-lt', gh_link_lt_role)
