@@ -72,7 +72,7 @@ jobs:
       - name: build libmysofa
         working-directory: libmysofa/build
         run: |
-          cmake ..
+          cmake .. -D CMAKE_MACOSX_RPATH=OFF
           make
           make install
       - name: build externals
