@@ -718,7 +718,7 @@ pkgdatadir="\$(datadir)/$PACKAGE"
 
 ENABLE_EXPLICIT([app-bundle], [creation of a MacOSX application bundle],
 [
-  AC_CHECK_PROG([have_dylibbundler], [dylibbundler], [yes], [no])
+  AC_CHECK_PROG([have_macdeployqt], [macdeployqt], [yes], [no])
   AS_IF([test x$enable_app_bundle = xyes -o x$enable_app_bundle = x],
     [DMG_NAME=SoundScapeRenderer-$PACKAGE_VERSION.dmg],
     [DMG_NAME=$enable_app_bundle])
@@ -734,7 +734,7 @@ ENABLE_EXPLICIT([app-bundle], [creation of a MacOSX application bundle],
   docdir=${bundledir}/Documentation
 
   dnl linker flag to add space to the output file header padding,
-  dnl so when dylibbundler is changing paths to shared libs later on,
+  dnl so when macdeployqt is changing paths to shared libs later on,
   dnl longer paths will fit in too.
   LDFLAGS="$LDFLAGS -headerpad_max_install_names"
 ])
@@ -854,10 +854,10 @@ AS_IF([test x$have_manpages != xyes],
   echo "|>  WARNING: help2man was not found!"
   echo "|>  Disabling building of manpages"
 ])
-AS_IF([test x$have_app_bundle = xyes -a x$have_dylibbundler != xyes],
+AS_IF([test x$have_app_bundle = xyes -a x$have_macdeployqt != xyes],
 [
   echo "|"
-  echo "|>  WARNING: dylibbundler was not found!"
+  echo "|>  WARNING: macdeployqt was not found!"
   echo "|>  It is needed for creating the app bundle."
 ])
 
