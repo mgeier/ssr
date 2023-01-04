@@ -56,7 +56,7 @@ jobs:
           name: Configuring SSR
           command: |
             ./autogen.sh
-            ./configure $CONFIGURE_FLAGS
+            ./configure --disable-dependency-tracking $CONFIGURE_FLAGS
 
       - store_artifacts:
           name: Uploading config.log
@@ -98,6 +98,11 @@ jobs:
           path: ~/tarball
           destination: .
 
+      - persist_to_workspace:
+          root: ~/tarball
+          paths:
+            - ssr-*.tar.gz
+
       - run:
           name: Building Doxygen docs
           command: |
@@ -129,8 +134,72 @@ jobs:
           path: doc/manual/_build/linkcheck
           destination: linkcheck
 
+  app_bundle:
+    macos:
+      xcode: "14.2.0"
+    environment:
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      CONFIGURE_FLAGS: --enable-ecasound --enable-gui --enable-ip-interface --enable-websocket-interface --enable-fudi-interface --enable-browser-gui --disable-intersense --enable-polhemus --enable-razor --enable-sofa --enable-vrpn
+
+    steps:
+      - run:
+          name: Install macOS packages
+          command: |
+            PACKAGES=(
+              asio
+              dylibbundler
+              ecasound
+              fftw
+              fmt
+              jack
+              SoundScapeRenderer/ssr/libmysofa
+              libsndfile
+              libtool
+              pkg-config
+              qt@5
+              vrpn
+              websocketpp
+            )
+            brew install ${PACKAGES[@]}
+            brew link qt@5 --force
+
+      - attach_workspace:
+          at: /tmp/tarball
+
+      - run:
+          name: Extracting the tarball
+          command: |
+            tar xvf /tmp/tarball/ssr-*.tar.gz
+
+      - run:
+          name: Configuring the SSR
+          command: |
+            cd ssr-*/
+            ./configure --enable-app-bundle --disable-dependency-tracking $CONFIGURE_FLAGS
+
+      - run:
+          name: Building the SSR App Bundle and DMG
+          command: |
+            cd ssr-*/
+            make dmg
+
+      - run:
+          # It seems that store_artifacts doesn't allow wildcards, so we move it to a directory:
+          name: Moving DMG to directory
+          command: |
+            mkdir -p app-bundle
+            mv ssr-*/SoundScapeRenderer-*.dmg app-bundle/
+
+      - store_artifacts:
+          name: Uploading DMG
+          path: app-bundle
+          destination: app-bundle
+
 workflows:
   version: 2
-  i-would-like-some-docs:
+  build-everything:
     jobs:
       - build_docs
+      - app_bundle:
+          requires:
+            - build_docs

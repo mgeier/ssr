@@ -36,6 +36,7 @@ install-data-hook:
 	install_name_tool -id @executable_path/../PlugIns/platforms/libqcocoa.dylib $(DESTDIR)$(contentsdir)/PlugIns/platforms/libqcocoa.dylib
 
 	-cd $(DESTDIR)$(dmgrootdir) && $(LN_S) /Applications
+
 	for qtc in QtGui QtCore QtOpenGL QtWidgets QtPrintSupport QtDBus; do \
 		install_name_tool -change $(QTLIBDIR)/$$qtc.framework/Versions/5/$$qtc @executable_path/../Frameworks/$$qtc.framework/Versions/5/$$qtc $(DESTDIR)$(contentsdir)/PlugIns/platforms/libqcocoa.dylib \
 		; mkdir -p $(prefix)/Frameworks/$$qtc.framework/Versions/5 \
@@ -55,25 +56,9 @@ install-data-hook:
 		; install_name_tool -change /usr/local/opt/qt/lib/QtPrintSupport.framework/Versions/5/QtPrintSupport @executable_path/../Frameworks/QtPrintSupport.framework/Versions/5/QtPrintSupport $(prefix)/MacOS/$$exec \
 	; done
 
-# fix linking of libraries
-	install_name_tool -change /usr/local/lib/libogg.0.dylib  @executable_path/../Libraries/libogg.0.dylib  $(prefix)/Libraries/libvorbis.0.dylib
-	install_name_tool -change /usr/local/Cellar/libvorbis/1.3.5/lib/libvorbis.0.dylib  @executable_path/../Libraries/libvorbis.0.dylib  $(prefix)/Libraries/libvorbisenc.2.dylib
-	install_name_tool -change /usr/local/lib/libogg.0.dylib  @executable_path/../Libraries/libogg.0.dylib  $(prefix)/Libraries/libvorbisenc.2.dylib
-
-# fix linking of frameworks
 	for qtc in QtGui QtCore QtOpenGL QtWidgets QtPrintSupport; do \
 		install_name_tool -id @executable_path/../Frameworks/$$qtc.framework/Versions/5/$$qtc $(DESTDIR)$(contentsdir)/Frameworks/$$qtc.framework/Versions/5/$$qtc \
 	; done
-
-# code sign frameworks
-	for qtc in QtGui QtCore QtOpenGL QtWidgets QtPrintSupport QtDBus; do \
-		mkdir -p $(dmgrootdir)/SoundScapeRenderer-@PACKAGE_VERSION@/SoundScapeRenderer.app/Contents/Frameworks/$$qtc.framework/Resources/ \
-		; cp /usr/local/opt/qt/lib/$$qtc.framework/Resources/Info.plist $(dmgrootdir)/SoundScapeRenderer-@PACKAGE_VERSION@/SoundScapeRenderer.app/Contents/Frameworks/$$qtc.framework/Resources/ \
-		; codesign --force --deep --sign "Developer ID Application: Jens Ahrens" $(dmgrootdir)/SoundScapeRenderer-@PACKAGE_VERSION@/SoundScapeRenderer.app/Contents/Frameworks/$$qtc.framework \
-	; done
-
-# code sign app
-	codesign --force --deep --sign "Developer ID Application: Jens Ahrens" $(dmgrootdir)/SoundScapeRenderer-@PACKAGE_VERSION@/SoundScapeRenderer.app
 
 
 # create a DMG image
@@ -92,7 +77,6 @@ dmg:
 		"$(top_builddir)/SSRTemp.dmg"
 	$(RM) "$(top_builddir)/SSRTemp.dmg"
 	$(RM) -r "$(dmgrootdir)"
-	codesign --deep --force --timestamp --sign 'Developer ID Application: Jens Ahrens' $(top_builddir)/$(DMG_NAME)
 
 .PHONY: dmg
 
