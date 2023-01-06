@@ -14,7 +14,7 @@ contents_DATA = Info.plist
 dist_bin_SCRIPTS = run-ssr.sh
 dist_noinst_SCRIPTS = run-ssr.applescript
 
-nobase_dist_dmgroot_DATA = .background/background.png Jack.webloc Getting-Started.txt
+nobase_dist_dmgroot_DATA = Jack.webloc Getting-Started.txt
 
 # this is done after installing the executable
 install-exec-hook:
@@ -70,7 +70,6 @@ dmg:
 		-volname "SoundScape Renderer @PACKAGE_VERSION@" \
 		-srcfolder "$(dmgrootdir)" \
 		"$(top_builddir)/SSRTemp.dmg"
-	osascript DMG-Layout.applescript
 	hdiutil detach "/Volumes/SoundScape Renderer @PACKAGE_VERSION@"
 	hdiutil convert -ov -format UDZO -imagekey zlib-level=9 \
 		-o "$(top_builddir)/$(DMG_NAME)" \
