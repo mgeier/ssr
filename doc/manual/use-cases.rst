@@ -62,7 +62,7 @@ realtime convolution whereby we can exchange the filters that are being applied.
 
 Let's assume that we want to filter a single-channel signal in realtime with a
 filter that we would like to be able to replace as the convolution is going. We
-use the binaural Renderer for this with one virtual source.
+use the Binaural Renderer for this with one virtual source.
 
 SSR accepts one input channel, which it convolves with two different dedicated
 impulse responses (one for the left and one for right ear) to produce two output
@@ -102,7 +102,7 @@ On Linux, start SSR using::
 
 and drag and drop an audio file into the GUI.
 
-On macOS, start SSR using::
+On macOS, start SSR just as with Linux. Or, if you have an app bundle, use::
 
   open -a SoundScapeRenderer --args --brs "--fudi-server=1147 --no-websocket-server --hrirs=data/scenes/impulse_responses/irs_1-in-1-out.wav"
 
