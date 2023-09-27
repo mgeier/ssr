@@ -2085,10 +2085,13 @@ Controller<Renderer>::_start_gui(const std::string& path_to_gui_images
 {
   // Check whether the system supports OpenGL and set default OpenGL format
   // which will be applied to QGLWidget.
-  // Should be equivalent to glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
   QSurfaceFormat gl_format;
-  gl_format.setVersion(3, 3);
+  gl_format.setVersion(3, 4);
+#ifdef _WIN32
+  gl_format.setProfile(QSurfaceFormat::CompatibilityProfile);
+#else
   gl_format.setProfile(QSurfaceFormat::CoreProfile);
+#endif
   QSurfaceFormat::setDefaultFormat(gl_format);
 
   _gui.reset(new QGUI(*this, _legacy_scene, _argc, _argv,
