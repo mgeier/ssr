@@ -125,7 +125,7 @@ dnl of variable with value.
 
 
 AS_IF([test "$host_os" = "mingw32"], [
-  CXXFLAGS="$CXXFLAGS -mwin32"
+  CXXFLAGS="$CXXFLAGS -mwin32 -mwindows -fno-omit-frame-pointer"
 ])
 
 ENABLE_AUTO([all],
