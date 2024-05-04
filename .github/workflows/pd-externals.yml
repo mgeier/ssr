@@ -40,7 +40,10 @@ jobs:
           path: ssr/flext/build/*
 
   macos:
-    runs-on: macos-latest
+    strategy:
+      matrix:
+        os: [macos-13, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: install macOS packages
         run: |
@@ -73,7 +76,7 @@ jobs:
       - name: upload macOS externals
         uses: actions/upload-artifact@v3
         with:
-          name: macos-externals
+          name: macos-externals-${{ matrix.os }}
           path: ssr/flext/build/*
 
   windows:
@@ -145,10 +148,15 @@ jobs:
         with:
           name: linux-externals
           path: ssr
-      - name: Retrieve macOS external
+      - name: Retrieve Intel macOS external
         uses: actions/download-artifact@v3
         with:
-          name: macos-externals
+          name: macos-externals-macos-13
+          path: ssr
+      - name: Retrieve arm64 macOS external
+        uses: actions/download-artifact@v3
+        with:
+          name: macos-externals-macos-latest
           path: ssr
       - name: Retrieve Windows external
         uses: actions/download-artifact@v3
