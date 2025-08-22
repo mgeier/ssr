@@ -34,7 +34,7 @@ jobs:
             vrpn:p
             yarn:p
       - name: checkout asdf-rust
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
         with:
           repository: AudioSceneDescriptionFormat/asdf-rust
           ref: '1.0.0'
@@ -45,12 +45,12 @@ jobs:
         run: |
           cargo cinstall --verbose --prefix=/ucrt64
       - name: checkout websocketpp
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
         with:
           repository: zaphoyd/websocketpp
           path: websocketpp
       - name: Get SSR source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
         with:
           submodules: true
           # This is required to be able to fetch tags,
@@ -90,7 +90,7 @@ jobs:
           ./configure --disable-dependency-tracking "${CONFIGURE_OPTIONS[@]}"
       - name: upload config.log
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: config.log
           path: ssr/config.log
@@ -103,7 +103,7 @@ jobs:
         run: |
           make nsis
       - name: upload installer
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ssr-installer
           path: "ssr/windows-installer/SoundScape Renderer * Installer.exe"
