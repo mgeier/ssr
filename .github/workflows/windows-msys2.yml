@@ -1,5 +1,8 @@
 name: SSR for Windows, using MSYS2
 on: [push, pull_request]
+env:
+  # https://github.com/Prior99/libsamplerate-sys/issues/21:
+  CMAKE_POLICY_VERSION_MINIMUM: 3.5
 jobs:
   build-win:
     runs-on: windows-latest
