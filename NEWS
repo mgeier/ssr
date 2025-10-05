@@ -1,5 +1,9 @@
 User-visible changes in the SoundScape Renderer. Recent changes on top.
 
+0.6.2 (5 October 2025)
+
+ - Minor fixes
+
 0.6.1 (7 July 2023)
 
  - Support for dynamic 3D scenes with ASDF v0.4
